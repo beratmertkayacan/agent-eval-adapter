@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# Virtual environment
+.venv/
+
+# Secrets
+.env
+
+# Recorded runs (sample runs live in samples/runs/)
+runs/
+
+# Test and lint output
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Editor and OS files
+.vscode/
+.cursor/
+.idea/
+.DS_Store
