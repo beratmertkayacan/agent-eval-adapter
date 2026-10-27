@@ -16,3 +16,7 @@ responseMapping:
   toolCalls: toolCalls
   approval: approval
   requestId: requestId
+
+# Extra field names to hide in recorded runs.
+# apiKey, authorization, token, password and secret are always hidden.
+redactFields: []
