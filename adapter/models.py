@@ -28,6 +28,7 @@ class AgentConfig(CamelModel):
     agent_id: str
     request: RequestConfig
     response_mapping: dict[MappedField, str]
+    redact_fields: list[str] = []
 
 
 class RunRequest(CamelModel):
@@ -61,4 +62,23 @@ class NormalizedResponse(CamelModel):
     request: RunRequest
     response: RunResponse
     observability: Observability
+    error: RunError | None = None
+
+
+class RecordedRequest(CamelModel):
+    input: Any
+    session_id: str | None = None
+    body: dict[str, Any]
+
+
+class RunRecord(CamelModel):
+    run_id: str
+    agent_id: str
+    session_id: str | None = None
+    timestamp: str
+    request: RecordedRequest
+    raw_response: Any = None
+    normalized_response: NormalizedResponse
+    http_status: int | None = None
+    latency_ms: int
     error: RunError | None = None
