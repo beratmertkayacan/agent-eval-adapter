@@ -1,0 +1,22 @@
+# Warehouse Outbound Invoice Agent (Task 1)
+# The base URL comes from the TARGET_AGENT_BASE_URL environment variable.
+agentId: warehouse-agent
+
+request:
+  endpoint: /agent/chat
+  method: POST
+  inputField: message      # a text input is sent as {"message": "..."}
+  sessionField: sessionId  # the session ID is sent in this field
+  timeoutSeconds: 30
+
+responseMapping:
+  answer: answer
+  status: status
+  sessionId: sessionId
+  toolCalls: toolCalls
+  approval: approval
+  requestId: requestId
+
+# Extra field names to hide in recorded runs.
+# apiKey, authorization, token, password and secret are always hidden.
+redactFields: []
