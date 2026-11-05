@@ -4,10 +4,11 @@ from pathlib import Path
 from dotenv import load_dotenv
 from fastapi import Depends, FastAPI, Request
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, PlainTextResponse
 
 from adapter.agent_config import AgentNotFoundError
 from adapter.config import load_settings
+from adapter.export import ExportFormat, export_runs
 from adapter.models import InvokeRequest, RunRecord
 from adapter.recorder import RunNotFoundError, RunRecorder
 from adapter.service import AdapterService, InvalidRequestError
@@ -72,3 +73,16 @@ def session_runs(
     session_id: str, service: AdapterService = Depends(get_service)
 ) -> list[RunRecord]:
     return service.session_runs(session_id)
+
+
+@app.post("/runs/{run_id}/replay")
+def replay_run(run_id: str, service: AdapterService = Depends(get_service)) -> RunRecord:
+    return service.replay(run_id)
+
+
+@app.get("/export")
+def export(
+    format: ExportFormat = "json", service: AdapterService = Depends(get_service)
+) -> PlainTextResponse:
+    media_type = "application/x-ndjson" if format == "jsonl" else "application/json"
+    return PlainTextResponse(export_runs(service.list_runs(), format), media_type=media_type)
