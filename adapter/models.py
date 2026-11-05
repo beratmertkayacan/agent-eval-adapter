@@ -77,6 +77,7 @@ class RunRecord(CamelModel):
     session_id: str | None = None
     previous_run_id: str | None = None
     turn: int = 1
+    replay_of: str | None = None
     timestamp: str
     request: RecordedRequest
     raw_response: Any = None

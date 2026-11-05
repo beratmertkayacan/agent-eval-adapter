@@ -53,12 +53,24 @@ class AdapterService:
             session_id=session_id,
             body=build_body(agent, request.input, session_id),
         )
-        result = call_agent(agent, self.base_url, recorded.body, self.transport)
-        run = build_run(self.recorder.next_run_id(), agent, recorded, result)
+        run = self._call(agent, recorded)
         if previous:
             run.previous_run_id = previous.run_id
             run.turn = previous.turn + 1
         return self.recorder.save(run, agent.redact_fields)
+
+    def replay(self, run_id: str) -> RunRecord:
+        original = self.recorder.get(run_id)
+        agent = load_agent(original.agent_id, self.agents_dir)
+        run = self._call(agent, original.request)
+        run.replay_of = original.run_id
+        run.previous_run_id = original.previous_run_id
+        run.turn = original.turn
+        return self.recorder.save(run, agent.redact_fields)
+
+    def _call(self, agent: AgentConfig, recorded: RecordedRequest) -> RunRecord:
+        result = call_agent(agent, self.base_url, recorded.body, self.transport)
+        return build_run(self.recorder.next_run_id(), agent, recorded, result)
 
     def list_runs(self) -> list[RunRecord]:
         return self.recorder.list_runs()
