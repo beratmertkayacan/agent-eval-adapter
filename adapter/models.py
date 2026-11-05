@@ -75,6 +75,8 @@ class RunRecord(CamelModel):
     run_id: str
     agent_id: str
     session_id: str | None = None
+    previous_run_id: str | None = None
+    turn: int = 1
     timestamp: str
     request: RecordedRequest
     raw_response: Any = None
@@ -82,3 +84,8 @@ class RunRecord(CamelModel):
     http_status: int | None = None
     latency_ms: int
     error: RunError | None = None
+
+
+class InvokeRequest(CamelModel):
+    input: str | dict[str, Any]
+    previous_run_id: str | None = None
