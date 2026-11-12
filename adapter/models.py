@@ -26,6 +26,7 @@ class RequestConfig(CamelModel):
 
 class AgentConfig(CamelModel):
     agent_id: str
+    base_url_env: str = "TARGET_AGENT_BASE_URL"
     request: RequestConfig
     response_mapping: dict[MappedField, str]
     redact_fields: list[str] = []
