@@ -4,7 +4,7 @@ from typing import Any
 
 import httpx2
 
-from adapter.agent_config import AGENTS_DIR, load_agent
+from adapter.agent_config import AGENTS_DIR, list_agent_ids, load_agent
 from adapter.client import call_agent
 from adapter.models import AgentConfig, InvokeRequest, RecordedRequest, RunRecord
 from adapter.normalize import build_run
@@ -80,6 +80,9 @@ class AdapterService:
         if not base_url:
             raise InvalidRequestError(f"Environment variable {agent.base_url_env} is not set")
         return base_url
+
+    def list_agents(self) -> list[str]:
+        return list_agent_ids(self.agents_dir)
 
     def list_runs(self) -> list[RunRecord]:
         return self.recorder.list_runs()
