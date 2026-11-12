@@ -1,9 +1,10 @@
+import os
 from pathlib import Path
 from typing import Any
 
 import httpx2
 
-from adapter.agent_config import AGENTS_DIR, load_agent
+from adapter.agent_config import AGENTS_DIR, list_agent_ids, load_agent
 from adapter.client import call_agent
 from adapter.models import AgentConfig, InvokeRequest, RecordedRequest, RunRecord
 from adapter.normalize import build_run
@@ -69,8 +70,19 @@ class AdapterService:
         return self.recorder.save(run, agent.redact_fields)
 
     def _call(self, agent: AgentConfig, recorded: RecordedRequest) -> RunRecord:
-        result = call_agent(agent, self.base_url, recorded.body, self.transport)
+        result = call_agent(agent, self._base_url(agent), recorded.body, self.transport)
         return build_run(self.recorder.next_run_id(), agent, recorded, result)
+
+    def _base_url(self, agent: AgentConfig) -> str:
+        if agent.base_url_env == "TARGET_AGENT_BASE_URL":
+            return self.base_url
+        base_url = os.getenv(agent.base_url_env)
+        if not base_url:
+            raise InvalidRequestError(f"Environment variable {agent.base_url_env} is not set")
+        return base_url
+
+    def list_agents(self) -> list[str]:
+        return list_agent_ids(self.agents_dir)
 
     def list_runs(self) -> list[RunRecord]:
         return self.recorder.list_runs()

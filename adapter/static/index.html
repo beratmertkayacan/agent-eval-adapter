@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Agent Evaluation Adapter</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 1100px; margin: 2rem auto; padding: 0 1rem; }
+    textarea { width: 100%; box-sizing: border-box; font-family: monospace; }
+    select, button { margin: 0.5rem 0.5rem 0.5rem 0; padding: 0.4rem 1rem; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #ccc; padding: 0.25rem 0.75rem; text-align: left; }
+    pre { background: #f5f5f5; padding: 0.75rem; overflow: auto; max-height: 24rem; }
+    .columns { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1rem; }
+    .error { color: #b00020; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Agent Evaluation Adapter</h1>
+    <p>Send a request to an agent through the adapter. Every call is stored as a run.</p>
+
+    <label for="agent">Agent</label>
+    <select id="agent"></select>
+
+    <p><label for="input">Request (text or a JSON object)</label></p>
+    <textarea id="input" rows="8">Invoice No: INV-1001
+Order No: ORD-2001
+Warehouse: WH-IST-01
+Customer: CUST-1001
+Product: PROD-001
+Quantity: 10
+Destination: Ankara</textarea>
+
+    <p>
+      <label><input type="checkbox" id="continue" disabled> Continue the session of <span id="continue-run">the last run</span></label>
+    </p>
+    <button id="send">Send</button>
+    <p id="error" class="error"></p>
+
+    <section id="result" hidden>
+      <h2>Run <span id="run-id"></span></h2>
+      <table>
+        <tr><th>Agent</th><td id="run-agent"></td><th>Status</th><td id="status"></td></tr>
+        <tr><th>Session ID</th><td id="session-id"></td><th>Turn</th><td id="turn"></td></tr>
+        <tr><th>Latency</th><td id="latency"></td><th>HTTP status</th><td id="http-status"></td></tr>
+        <tr><th>Replay of</th><td id="replay-of"></td><th>Error</th><td id="run-error"></td></tr>
+      </table>
+      <button id="replay">Replay this run</button>
+
+      <div class="columns">
+        <div>
+          <h3>Normalized response</h3>
+          <pre id="normalized"></pre>
+        </div>
+        <div>
+          <h3>Raw response</h3>
+          <pre id="raw"></pre>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Run history</h2>
+      <p>
+        Export: <a href="/export?format=json" target="_blank">JSON</a> |
+        <a href="/export?format=jsonl" target="_blank">JSONL</a>
+      </p>
+      <table>
+        <thead>
+          <tr>
+            <th>Run</th><th>Agent</th><th>Status</th><th>Session</th>
+            <th>Turn</th><th>Latency</th><th>Error</th><th></th>
+          </tr>
+        </thead>
+        <tbody id="history"></tbody>
+      </table>
+    </section>
+  </main>
+  <script src="/static/app.js"></script>
+</body>
+</html>

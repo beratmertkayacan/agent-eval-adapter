@@ -4,7 +4,8 @@ from pathlib import Path
 from dotenv import load_dotenv
 from fastapi import Depends, FastAPI, Request
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse, PlainTextResponse
+from fastapi.responses import FileResponse, JSONResponse, PlainTextResponse
+from fastapi.staticfiles import StaticFiles
 
 from adapter.agent_config import AgentNotFoundError
 from adapter.config import load_settings
@@ -17,6 +18,7 @@ APP_DIR = Path(__file__).resolve().parent
 load_dotenv(APP_DIR.parent / ".env")
 
 app = FastAPI(title="Agent Evaluation Adapter", version="0.1.0")
+app.mount("/static", StaticFiles(directory=APP_DIR / "static"), name="static")
 
 
 @lru_cache
@@ -46,9 +48,19 @@ async def handle_invalid_body(request: Request, error: RequestValidationError) -
     )
 
 
+@app.get("/", include_in_schema=False)
+def playground() -> FileResponse:
+    return FileResponse(APP_DIR / "static" / "index.html")
+
+
 @app.get("/health")
 def health() -> dict[str, str]:
     return {"status": "ok"}
+
+
+@app.get("/agents")
+def list_agents(service: AdapterService = Depends(get_service)) -> list[str]:
+    return service.list_agents()
 
 
 @app.post("/agents/{agent_id}/invoke")

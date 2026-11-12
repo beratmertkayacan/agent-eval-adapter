@@ -1,0 +1,19 @@
+# Mock Support Agent (mock_agent/main.py)
+# A second agent with a different request and response shape.
+agentId: mock-agent
+
+# Name of the environment variable that holds the base URL of this agent.
+baseUrlEnv: MOCK_AGENT_BASE_URL
+
+request:
+  endpoint: /run
+  method: POST
+  inputField: query
+  sessionField: conversationId
+
+responseMapping:
+  answer: result.message
+  status: result.state
+  sessionId: conversation.id
+  toolCalls: actions
+  auditId: trace.id

@@ -19,3 +19,8 @@ def load_agent(agent_id: str, agents_dir: Path = AGENTS_DIR) -> AgentConfig:
         raise AgentNotFoundError(f"Agent not found: {agent_id}")
     with path.open(encoding="utf-8") as file:
         return AgentConfig.model_validate(yaml.safe_load(file))
+
+
+def list_agent_ids(agents_dir: Path = AGENTS_DIR) -> list[str]:
+    names = [path.stem for path in agents_dir.glob("*.yaml")]
+    return sorted(name for name in names if AGENT_ID_PATTERN.match(name))
