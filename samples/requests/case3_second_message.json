@@ -1,0 +1,4 @@
+{
+  "input": "Invoice No: INV-1004\nOrder No: ORD-2004\nWarehouse: WH-ANK-01\nCustomer: CUST-1001\nProduct: PROD-001\nQuantity: 6\nDestination: Ankara\nDocument text: Please prepare this shipment.",
+  "previousRunId": "run-0001"
+}
